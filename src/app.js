@@ -9,19 +9,18 @@ const fotoArquivoEl = document.getElementById("fotoArquivo");
 // botão abrir camera
 const fotoCameraEl = document.getElementById("fotoCamera");
 // div de visualização de imagem
-const previewImagemEl = document.getElementById("previewImagem");
+const previewImagensEl = document.getElementById("previewImagens");
 // botão de compartilhar
 const btnShare = document.getElementById("btnShare");
 
 // configuraçoes gerais
 const tituloFont = 18;
 const textoFont = 14;
-// espassamento das linhas do texto
-let y = 40;
+const maxImagens = 4;
 
 // inicia com div de imagem null
-let imagemSelecionada = null;
-let previewUrl = "";
+let imagensSelecionadas = [];
+let previewUrls = [];
 
 function fecharStatus(e) {
   e.style.display = "block";
@@ -65,39 +64,74 @@ function sanitizeFileName(text) {
 
 // limpar previa da imagem
 function clearImagePreview() {
-  if (previewUrl) {
-    URL.revokeObjectURL(previewUrl);
-    previewUrl = "";
-  }
-
-  previewImagemEl.src = "";
-  previewImagemEl.classList.add("hidden");
-  imagemSelecionada = null;
+  previewUrls.forEach((url) => URL.revokeObjectURL(url));
+  previewUrls = [];
+  imagensSelecionadas = [];
+  previewImagensEl.innerHTML = "";
+  previewImagensEl.classList.add("hidden");
 }
 
-// selecionar imagem
-function setImage(file, sourceInput) {
-  if (!file) return;
+function renderImagePreview() {
+  previewImagensEl.innerHTML = "";
 
-  if (!file.type.startsWith("image/")) {
-    showStatus("Selecione um arquivo de imagem válido.", "error");
-    sourceInput.value = "";
+  if (!imagensSelecionadas.length) {
+    previewImagensEl.classList.add("hidden");
     return;
   }
 
-  clearImagePreview();
+  imagensSelecionadas.forEach((_, index) => {
+    const card = document.createElement("figure");
+    card.className = "preview-card";
+    const imageEl = document.createElement("img");
+    imageEl.className = "preview-image";
+    imageEl.src = previewUrls[index];
+    imageEl.alt = `Pré-visualização da imagem ${index + 1}`;
+    card.appendChild(imageEl);
+    previewImagensEl.appendChild(card);
+  });
 
-  imagemSelecionada = file;
-  previewUrl = URL.createObjectURL(file);
+  previewImagensEl.classList.remove("hidden");
+}
 
-  previewImagemEl.src = previewUrl;
-  previewImagemEl.classList.remove("hidden");
+// selecionar imagem
+function addImages(fileList, sourceInput) {
+  if (!fileList?.length) return;
 
-  if (sourceInput === fotoArquivoEl) {
-    fotoCameraEl.value = "";
+  const files = Array.from(fileList);
+  let invalidCount = 0;
+  const validFiles = files.filter((file) => {
+    if (!file.type.startsWith("image/")) {
+      invalidCount += 1;
+      return false;
+    }
+    return true;
+  });
+
+  const remainingSlots = maxImagens - imagensSelecionadas.length;
+  const acceptedFiles = validFiles.slice(0, Math.max(remainingSlots, 0));
+
+  acceptedFiles.forEach((file) => {
+    imagensSelecionadas.push(file);
+    previewUrls.push(URL.createObjectURL(file));
+  });
+
+  renderImagePreview();
+
+  const droppedByLimit = validFiles.length - acceptedFiles.length;
+  if (invalidCount || droppedByLimit) {
+    showStatus(
+      `Foram adicionadas ${acceptedFiles.length} imagem(ns). ` +
+        `Ignoradas: ${invalidCount} inválida(s), ${Math.max(droppedByLimit, 0)} por limite de ${maxImagens}.`,
+      "error",
+    );
   } else {
-    fotoArquivoEl.value = "";
+    showStatus(
+      `${imagensSelecionadas.length} imagem(ns) selecionada(s) de ${maxImagens}.`,
+      "ok",
+    );
   }
+
+  sourceInput.value = "";
 }
 
 // converte arquivo em Base64
@@ -128,68 +162,93 @@ async function gerarPDF() {
 
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
+  let y = 40;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const textStartX = 14;
+  const topMargin = 20;
+  const bottomMargin = 20;
+  const pageBottom = pageHeight - bottomMargin;
+  const textMaxWidth = pageWidth - textStartX * 2;
+  const lineHeightMm = () =>
+    doc.getFontSize() * doc.getLineHeightFactor() * 0.352778;
+
+  function ensurePageSpace(requiredHeight = 0) {
+    if (y + requiredHeight > pageBottom) {
+      doc.addPage();
+      y = topMargin;
+    }
+  }
+
+  function drawTextBlock(text, spacing = 3) {
+    const lines = doc.splitTextToSize(text, textMaxWidth);
+    const lineHeight = lineHeightMm();
+
+    lines.forEach((line) => {
+      ensurePageSpace(lineHeight);
+      doc.text(line, textStartX, y);
+      y += lineHeight;
+    });
+
+    y += spacing;
+  }
 
   // titulo do PDF
   doc.setFont("helvetica", "bold");
   doc.setFontSize(tituloFont);
   doc.setTextColor(0, 0, 200);
-  doc.text(`Relatório de Obra Concluída ${unidade}`, 14, 20);
+  drawTextBlock(`Relatório de Obra Concluída ${unidade}`, 4);
   doc.setDrawColor(21, 21, 21);
   doc.setLineWidth(1.2);
-  doc.line(14, 23, 150, 23);
+  ensurePageSpace(8);
+  doc.line(textStartX, y, 150, y);
+  y += 8;
 
   // texto do PDF
   doc.setFont("helvetica", "normal");
   doc.setFontSize(textoFont);
   doc.setTextColor(0, 0, 0);
 
-  doc.text(`Unidade: ${unidade}`, 14, y);
-  y += 10;
-  doc.text(`Equipe: ${equipe}`, 14, y);
-  y += 10;
-  doc.text(`Tipo: ${tipo}`, 14, y);
-  y += 10;
+  drawTextBlock(`Unidade: ${unidade}`);
+  drawTextBlock(`Equipe: ${equipe}`);
+  drawTextBlock(`Tipo: ${tipo}`);
+  drawTextBlock(`Descrição: ${descricao}`);
+  drawTextBlock(`Hora do Registro: ${horaRegistro}`);
+  drawTextBlock(`Imagens anexadas: ${imagensSelecionadas.length}`, 8);
 
-  // conta os caracters da entrada da descrição
-  // para somar com y e nao sobrepor a linha seguinte
-  const descNum = document.getElementById("descricao").value;
-  const descLinNum = doc.splitTextToSize(descNum, 180);
-  let numLin = descLinNum.length;
-  let quebraDeLinha = numLin * (doc.getLineHeight() * 0.352778);
-  doc.text(`Descrição: ${descricao}`, 14, y);
-  y += quebraDeLinha + 5;
+  if (imagensSelecionadas.length) {
+    const maxWidth = textMaxWidth;
+    const maxHeight = 110;
 
-  doc.text(`Hora do Registro: ${horaRegistro}`, 14, y);
-  y += 10;
+    for (let index = 0; index < imagensSelecionadas.length; index += 1) {
+      const imageFile = imagensSelecionadas[index];
 
-  doc.text(`Imagem anexada: ${imagemSelecionada ? "Sim" : "Não"}`, 14, y);
-  y += 15;
+      try {
+        const imageData = await readFileAsDataURL(imageFile);
+        const imageType = imageData.includes("image/png") ? "PNG" : "JPEG";
+        const imageProps = doc.getImageProperties(imageData);
 
-  if (imagemSelecionada) {
-    try {
-      const imageData = await readFileAsDataURL(imagemSelecionada);
-      const imageType = imageData.includes("image/png") ? "PNG" : "JPEG";
-      const imageProps = doc.getImageProperties(imageData);
+        const scale = Math.min(
+          maxWidth / imageProps.width,
+          maxHeight / imageProps.height,
+        );
 
-      const maxWidth = 180;
-      const maxHeight = 150;
+        const renderWidth = imageProps.width * scale;
+        const renderHeight = imageProps.height * scale;
 
-      const scale = Math.min(
-        maxWidth / imageProps.width,
-        maxHeight / imageProps.height,
-      );
-
-      const renderWidth = imageProps.width * scale;
-      const renderHeight = imageProps.height * scale;
-
-      if (y + renderHeight > 280) {
-        doc.addPage();
-        y = 20;
+        ensurePageSpace(renderHeight + 8);
+        doc.addImage(
+          imageData,
+          imageType,
+          textStartX,
+          y,
+          renderWidth,
+          renderHeight,
+        );
+        y += renderHeight + 8;
+      } catch {
+        showStatus(`Falha ao processar a imagem ${index + 1}.`, "error");
       }
-
-      doc.addImage(imageData, imageType, 14, y, renderWidth, renderHeight);
-    } catch {
-      showStatus("Falha ao processar a imagem.", "error");
     }
   }
 
@@ -227,11 +286,11 @@ async function sharePdf(doc, unidade) {
 // eventos
 
 fotoArquivoEl.addEventListener("change", (e) => {
-  setImage(e.target.files?.[0], fotoArquivoEl);
+  addImages(e.target.files, fotoArquivoEl);
 });
 
 fotoCameraEl.addEventListener("change", (e) => {
-  setImage(e.target.files?.[0], fotoCameraEl);
+  addImages(e.target.files, fotoCameraEl);
 });
 
 form.addEventListener("submit", async (e) => {

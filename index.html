@@ -46,7 +46,7 @@
         </div>
 
         <!-- Adição de imagens -->
-        <label>Adicionar imagem (opcional)</label>
+        <label>Adicionar imagens (opcional, até 4)</label>
         <div class="media-actions">
           <label for="fotoArquivo" class="media-button"><i class="ph-duotone ph-upload"></i>Enviar foto</label>
           <label for="fotoCamera" class="media-button"><i class="ph-duotone ph-device-mobile-camera"></i>Câmera</label>
@@ -54,8 +54,8 @@
         <input id="fotoArquivo" name="fotoArquivo" class="file-input" type="file" accept="image/*" multiple />
         <div class="open-cam">
           <input id="fotoCamera" name="fotoCamera" class="file-input" type="file" accept="image/*"
-            capture="environment" />
-          <img id="previewImagem" class="preview hidden" alt="Pré-visualização da imagem selecionada" />
+            capture="environment" multiple />
+          <div id="previewImagens" class="preview-grid hidden" aria-live="polite"></div>
           <!-- Botões de ações -->
           <div class="actions">
             <!-- Baixar PDF -->
@@ -65,6 +65,7 @@
           </div>
           <!-- Botão para limpar formulário -->
           <input class="clearData" type="reset" value="Limpar" />
+        </div>
       </form>
     </section>
   </main>
