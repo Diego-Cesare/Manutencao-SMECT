@@ -1,0 +1,280 @@
+:root {
+  --bg: #14131479;
+  --surface: #211f21c5;
+  --surface2: #2b2930d3;
+  --input: #21212185;
+  --card: #2525252a;
+  --text: #e6e1e5;
+  --muted: #334155;
+  --accent: #2f406e;
+  --accent-2: #52668b;
+  --border: #0063dd;
+  --ok: #8dffb8;
+  --error: #ff8080;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  position: relative;
+  margin: 0;
+  min-height: 100dvh;
+  font-family: "Ubuntu", sans-serif;
+  color: var(--text);
+  background: radial-gradient(
+    circle at 10% 10%,
+    #334155 0%,
+    var(--surface2) 20%,
+    var(--surface) 100%
+  );
+}
+
+.page {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: 0.5rem;
+}
+
+.card {
+  width: 100%;
+  max-width: 560px;
+  background: var(--bg);
+  border-radius: 20px;
+  padding: 1rem;
+  box-shadow: 0 12px 40px rgba(2, 6, 23, 0.35);
+  animation: rise 450ms ease-out;
+}
+
+h1 {
+  font-size: 1.45rem;
+  line-height: 1.2;
+}
+
+p {
+  color: var(--muted);
+  margin: 0.35rem 0 1rem;
+  background-color: var(--card);
+  padding: 10px;
+  position: absolute;
+  top: 0px;
+  left: 50%;
+  width: 90%;
+  transform: translateX(-50%);
+  text-align: center;
+  border-radius: 20px;
+  display: none;
+}
+
+i {
+  font-size: 1.5rem;
+  color: var(--text);
+}
+
+form {
+  display: grid;
+  gap: 0.55rem;
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.loc {
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.loc button {
+  all: unset;
+  background-color: var(--accent-2);
+  padding: 5px 10px;
+  color: var(--text);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+input,
+textarea,
+button {
+  width: 100%;
+  font: inherit;
+  outline: none;
+  border: none;
+  /* border-radius: 12px; */
+  padding: 0.75rem 0.85rem;
+}
+
+button,
+.media-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  border-radius: 10px;
+}
+
+input,
+textarea {
+  border-bottom: 1px solid var(--border);
+  background-color: var(--input);
+  color: var(--text);
+  font-size: 0.9rem;
+  margin-bottom: 1.3rem;
+}
+
+textarea {
+  resize: vertical;
+  height: 100px;
+}
+
+input:focus,
+textarea:focus {
+  outline: 2px solid color-mix(in srgb, var(--accent) 55%, white);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+#horaRegistro {
+  color: var(--text);
+}
+
+.media-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.media-button {
+  border: 1px solid var(--surface2);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+  cursor: pointer;
+  min-width: 48%;
+}
+
+.file-input {
+  display: none;
+}
+
+.preview {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.hidden {
+  display: none;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background-color: var(--surface);
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+button {
+  margin-top: 0.3rem;
+  border: none;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+button:hover {
+  filter: brightness(1.05);
+}
+
+.clearData {
+  margin-top: 0.3rem;
+  border: none;
+  background: var(--error);
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+  border-radius: 10px;
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease;
+}
+
+#status {
+  min-height: 1.2rem;
+  margin-top: 0.6rem;
+  font-weight: 700;
+}
+
+#status.ok {
+  color: var(--ok);
+}
+
+#status.error {
+  color: var(--error);
+}
+
+.ph-device-mobile-camera {
+  animation: anime-camera 5s ease-in-out infinite;
+}
+
+@keyframes anime-camera {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  50% {
+    transform: rotateZ(90deg) scale(1.2);
+    color: tomato;
+    border-right: solid 1px tomato;
+  }
+  100% {
+    transform: rotateZ(0deg);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 768px) {
+  .card {
+    padding: 1.5rem;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+  }
+}

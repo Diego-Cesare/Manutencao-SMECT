@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relatório de obras</title>
+  <link rel="icon" href="img/ico.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+</head>
+
+<body>
+  <main class="page">
+    <section class="card">
+      <div class="loc">
+        <h1>SMECT Relatório de Manutenção</h1>
+      </div>
+      <!-- Avisos -->
+      <p id="status" aria-live="polite"></p>
+      <form id="formulario" novalidate>
+        <!-- Entrada do unidade -->
+        <label for="unidade">Unidade</label>
+        <input id="unidade" name="unidade" type="text" placeholder="Nome do unidade" required />
+
+        <!-- Entrada da equipe -->
+        <label for="equipe">Equipe</label>
+        <input id="equipe" name="equipe" type="text" placeholder="Equipe que realizou a manutenção" required />
+
+        <!-- Entrada do tipo -->
+        <label for="tipo">Tipo</label>
+        <input id="tipo" name="tipo" type="text" placeholder="Ex.: Reparos elétricos" required />
+
+        <!-- Descrição do trabalho -->
+        <label for="descricao">Descricao</label>
+        <textarea name="descricao" id="descricao" placeholder="Descrição detalhada da manutenção"></textarea>
+
+        <!-- Data e hora do registro -->
+        <div class="horas" style="display: none;">
+          <input id="horaRegistro" name="horaRegistro" type="text" readonly required />
+        </div>
+
+        <!-- Adição de imagens -->
+        <label>Adicionar imagem (opcional)</label>
+        <div class="media-actions">
+          <label for="fotoArquivo" class="media-button"><i class="ph-duotone ph-upload"></i>Enviar foto</label>
+          <label for="fotoCamera" class="media-button"><i class="ph-duotone ph-device-mobile-camera"></i>Câmera</label>
+        </div>
+        <input id="fotoArquivo" name="fotoArquivo" class="file-input" type="file" accept="image/*" multiple />
+        <div class="open-cam">
+          <input id="fotoCamera" name="fotoCamera" class="file-input" type="file" accept="image/*"
+            capture="environment" />
+          <img id="previewImagem" class="preview hidden" alt="Pré-visualização da imagem selecionada" />
+          <!-- Botões de ações -->
+          <div class="actions">
+            <!-- Baixar PDF -->
+            <button type="submit"><i class="ph-duotone ph-file-arrow-down"></i> Baixar</button>
+            <!-- Compartilhar PDF (whatsapp, telegram, email, etc...) -->
+            <button type="button" id="btnShare"><i class="ph-duotone ph-share-network"></i>Enviar</button>
+          </div>
+          <!-- Botão para limpar formulário -->
+          <input class="clearData" type="reset" value="Limpar" />
+      </form>
+    </section>
+  </main>
+
+  <script src="src/app.js"></script>
+  <!-- <script src="src/geolacation.js"></script> -->
+</body>
+
+</html>
