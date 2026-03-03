@@ -2,6 +2,10 @@
 const form = document.getElementById("formulario");
 // acessibilidade
 const statusEl = document.getElementById("status");
+// menu de unidade
+const unitSelectEl = document.getElementById("unit-select");
+// menu de tipo
+const typeSelectEl = document.getElementById("type-select");
 // hora
 const horaRegistroEl = document.getElementById("horaRegistro");
 // botão enviar imagem
@@ -21,6 +25,89 @@ const maxImagens = 4;
 // inicia com div de imagem null
 let imagensSelecionadas = [];
 let previewUrls = [];
+
+// gerar menu de unidades
+const units = [
+  "A Magia do Aprender",
+  "Anna Escaravaco Fernandes",
+  "Alegria do Saber",
+  "Algodão Doce",
+  "Aprendendo Brincando",
+  "Aquarela",
+  "Arco-íris",
+  "Aventura da Criança",
+  "Balão Mágico",
+  "Bem Me Quer",
+  "Branca de Neve",
+  "Cantinho do Sorriso",
+  "Carrossel",
+  "Chapeuzinho Vermelho",
+  "Cinderela",
+  "Criança Feliz",
+  "Favinho de Mel",
+  "Girassol",
+  "Grasiela Tibincoski",
+  "João da Rocha Porto",
+  "Mundo da Imaginação",
+  "Mundo Encantado",
+  "Padre Silvestre Junckes",
+  "Paraíso da Mamãe",
+  "Pequeno Mundo",
+  "Pequeno Polegar",
+  "Pequeno Príncipe",
+  "Príncipe Encantado",
+  "Cezare Muneretto",
+  "Silvia Vieira Teixeira",
+  "Tempo Feliz",
+  "Zilda Arns Neumann",
+  "Alaíde Tabalipa",
+  "Angelo Zanellato",
+  "Ceja UD Içara",
+  "Hercílio Serafim",
+  "Ignácio João Monteiro",
+  "José Fernandes Silveira",
+  "Lúcia De Lucca",
+  "Maria Arlete Bittencourt Lodetti",
+  "Padre Pacífico Dagostim",
+  "Paulo Rizzieri",
+  "Profª Maria Barcellos Puziski",
+  "Quintino Rizzieri",
+  "São Rafael",
+  "Theophilo Cassemiro Silveira",
+  "Tranquillo Pissetti",
+  "Centro de Atendimento Especializado",
+];
+units.forEach((unit) => {
+  const opt = document.createElement("option");
+  opt.value = unit;
+  opt.textContent = unit;
+  unitSelectEl.appendChild(opt);
+});
+
+const types = [
+  "Alvenaria",
+  "Capina",
+  "Carpintaria",
+  "Decoração",
+  "Elétrica",
+  "Esgoto",
+  "Hidráulica",
+  "Internet",
+  "Limpeza",
+  "Marcenaria",
+  "Mudança",
+  "Pintura",
+  "Poda de Árvores",
+  "Roçada",
+  "Transporte",
+];
+
+types.forEach((tp) => {
+  const opt = document.createElement("option");
+  opt.value = tp;
+  opt.textContent = tp;
+  typeSelectEl.appendChild(opt);
+});
 
 function fecharStatus(e) {
   e.style.display = "block";

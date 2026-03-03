@@ -103,6 +103,7 @@ label {
   border-radius: 10px;
 }
 
+select,
 input,
 textarea,
 button {
@@ -122,6 +123,7 @@ button,
   border-radius: 10px;
 }
 
+select,
 input,
 textarea {
   border-bottom: 1px solid var(--border);
@@ -141,6 +143,25 @@ textarea:focus {
   outline: 2px solid color-mix(in srgb, var(--accent) 55%, white);
   outline-offset: 1px;
   border-color: var(--accent);
+}
+
+select option {
+  padding: 10px;
+  background-color: #212121;
+  color: var(--text);
+  font-size: 1.2rem;
+}
+
+select::-webkit-scrollbar {
+  background-color: #212121;
+  width: 4px;
+  border-radius: 10px;
+}
+
+select::-webkit-scrollbar-thumb {
+  background-color: #0063dd;
+  width: 2px;
+  border-radius: 10px;
 }
 
 #horaRegistro {
@@ -169,20 +190,9 @@ textarea:focus {
   display: none;
 }
 
-.preview-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.6rem;
-  margin-top: 0.5rem;
-}
-
-.preview-card {
-  margin: 0;
-}
-
-.preview-image {
+.preview {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  max-height: 220px;
   object-fit: cover;
   border-radius: 12px;
   border: 1px solid var(--border);
